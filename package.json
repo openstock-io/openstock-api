@@ -1,0 +1,14 @@
+{
+  "name"         : "openstock-crawler",
+  "version"      : "0.0.1",
+  "description"  : "Openstock web crawler",
+  "main"         : "app.js",
+  "author"       : "David",
+  "dependencies" : {
+    "express"    : "latest",
+    "request"    : "latest",
+    "cheerio"    : "latest",
+    "mongoose"   : "latest",
+    "body-parser": "latest"
+  }
+}
