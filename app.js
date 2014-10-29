@@ -24,8 +24,8 @@ var Company     = require('./app/models/company');
 
 // app.use('/api', router);
 
-var Globalcompact     = require('./app/models/Globalcompact');
-var Allabolag   	  = require('./app/models/Allabolag');
+var Globalcompact     = require('./app/models/globalcompact');
+var Allabolag   	  = require('./app/models/allabolag');
 
 // Get all companies
 app.get('/company', function(req, res){
