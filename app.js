@@ -29,22 +29,25 @@ var Allabolag   	  = require('./app/models/allabolag');
 
 // Get all companies
 app.get('/company', function(req, res){
-
 	Company.find(function(err, collection){
 		if(err){
 			return console.error(err);
 		}
 
 		res.send(collection);
-
 	});
-
 });
 
 
 // Get One company
-app.get('/company', function(req, res){
+app.get('/company/:id', function(req, res){
+	Company.findOne({}, function(err, company){
+		if(err){
+			return console.error(err);
+		}
 
+		res.send(company);
+	});
 });
 
 
@@ -71,7 +74,7 @@ app.post('/company', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/gc', function(req, res){
+app.get('/globalcompact', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
 
 	gc.crawl(function(err, data){
@@ -85,7 +88,7 @@ app.get('/gc', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/ab/:id', function(req, res){
+app.get('/board/:id', function(req, res){
 	var ab = new Allabolag.Allabolag();
 
 	ab.findBoardByNumber(req.params.id, function(err, data){
