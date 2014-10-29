@@ -18,16 +18,16 @@ Allabolag.prototype.equalityByNumber = function(num, callback){
 
 		// Iterate and calculate genders
 		data.forEach(function(el, index, array){
-			if(el.sex){
-				if(el.sex == 'm'){
+			if(el.gender){
+				if(el.gender == 'm'){
 					m++;
 				}
 
-				else if(el.sex == 'f'){
+				else if(el.gender == 'f'){
 					f++;
 				}
 
-				else if(el.sex == 'u'){
+				else if(el.gender == 'u'){
 					u++;
 				}
 			}
@@ -77,15 +77,15 @@ Allabolag.prototype.findBoardByNumber = function(num, callback){
 					var src = node.find('a img').attr('src');
 
 					if(src.search(/.*kvin.*/i) > -1){
-						ret.sex = 'f';
+						ret.gender = 'f';
 					}
 
 					else if(src.search(/.*man.*/i) > -1){
-						ret.sex = 'm';
+						ret.gender = 'm';
 					}
 
 					else{
-						ret.sex = 'u';
+						ret.gender = 'u';
 					}
 
 					ret.name = node.find('a.linkOne').text();
