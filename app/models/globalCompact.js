@@ -1,13 +1,13 @@
 var request = require('request');
 var cheerio = require('cheerio');
 
-function GlobalCompact(){
-	this.baseUrl = 'https://www.unglobalcompact.org';
+function Globalcompact(){
+	this.baseUrl = 'https://www.unGlobalcompact.org';
 	this.url = this.baseUrl + '/participants/search?business_type=2&commit=Search&cop_status=active&country%5B%5D=190&joined_after=&joined_before=&keyword=&listing_status_id=3&organization_type_id=&page=1&per_page=250&sector_id=&utf8=1';
 }
 
 
-GlobalCompact.prototype.crawl = function(callback){
+Globalcompact.prototype.crawl = function(callback){
 	request(this.url, function(error, response, html){
 
 		if(!error){
@@ -27,5 +27,5 @@ GlobalCompact.prototype.crawl = function(callback){
 	});
 }
 
-module.exports.GlobalCompact = GlobalCompact;
-module.exports.GlobalCompact.crawl = GlobalCompact.prototype.crawl;
+module.exports.Globalcompact = Globalcompact;
+module.exports.Globalcompact.crawl = Globalcompact.prototype.crawl;

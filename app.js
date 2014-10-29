@@ -24,8 +24,8 @@ var Company     = require('./app/models/company');
 
 // app.use('/api', router);
 
-var GlobalCompact     = require('./app/models/globalCompact');
-var AllaBolag   	  = require('./app/models/allaBolag');
+var Globalcompact     = require('./app/models/Globalcompact');
+var Allabolag   	  = require('./app/models/Allabolag');
 
 // Get all companies
 app.get('/company', function(req, res){
@@ -72,7 +72,7 @@ app.post('/company', function(req, res){
 
 // Perform a web crawl and output as json
 app.get('/gc', function(req, res){
-	var gc = new GlobalCompact.GlobalCompact();
+	var gc = new Globalcompact.Globalcompact();
 
 	gc.crawl(function(err, data){
 		if(!err)
@@ -86,7 +86,7 @@ app.get('/gc', function(req, res){
 
 // Perform a web crawl and output as json
 app.get('/ab/:id', function(req, res){
-	var ab = new AllaBolag.AllaBolag();
+	var ab = new Allabolag.Allabolag();
 
 	ab.findBoardByNumber(req.params.id, function(err, data){
 		if(!err)
@@ -99,7 +99,7 @@ app.get('/ab/:id', function(req, res){
 
 // Perform a web crawl and output as json
 app.get('/equality/:id', function(req, res){
-	var ab = new AllaBolag.AllaBolag();
+	var ab = new Allabolag.Allabolag();
 
 	ab.equalityByNumber(req.params.id, function(err, data){
 		if(!err){

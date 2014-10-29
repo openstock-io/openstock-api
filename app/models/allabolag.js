@@ -1,11 +1,11 @@
 var request = require('request');
 var cheerio = require('cheerio');
 
-function AllaBolag(){
-	this.baseUrl = 'http://www.allabolag.se';
+function Allabolag(){
+	this.baseUrl = 'http://www.Allabolag.se';
 }
 
-AllaBolag.prototype.equalityByNumber = function(num, callback){
+Allabolag.prototype.equalityByNumber = function(num, callback){
 	this.findBoardByNumber(num, function(err, data){
 
 		if(err){
@@ -55,7 +55,7 @@ AllaBolag.prototype.equalityByNumber = function(num, callback){
 }
 
 
-AllaBolag.prototype.findBoardByNumber = function(num, callback){
+Allabolag.prototype.findBoardByNumber = function(num, callback){
 	url = this.baseUrl + '/' + num + '/befattningar'
 	
 	request(url, function(err, response, html){
@@ -102,6 +102,6 @@ AllaBolag.prototype.findBoardByNumber = function(num, callback){
 	});
 }
 
-module.exports.AllaBolag = AllaBolag;
-module.exports.AllaBolag.findBoardByNumber = AllaBolag.prototype.findBoardByNumber;
-module.exports.AllaBolag.equalityByNumber = AllaBolag.prototype.equalityByNumber;
+module.exports.Allabolag = Allabolag;
+module.exports.Allabolag.findBoardByNumber = Allabolag.prototype.findBoardByNumber;
+module.exports.Allabolag.equalityByNumber = Allabolag.prototype.equalityByNumber;
