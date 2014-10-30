@@ -20,12 +20,39 @@ var port = process.env.PORT || 8001; 		// set our port
 
 var router = express.Router(); 				// get an instance of the express Router
 
-var Company     = require('./app/models/company');
 
-// app.use('/api', router);
 
-var Globalcompact     = require('./app/models/globalcompact');
-var Allabolag   	  = require('./app/models/allabolag');
+
+var Schema       = mongoose.Schema;
+
+var indexSchema = new Schema({
+	name: {type: String, required: true},
+	value: {type: Number}
+});
+
+var stockSchema = new Schema({
+	tickername: {type: String, required: false},
+	lastprice: {type: Number}
+});
+
+var companySchema = new Schema({
+	name: {type: String, required: true},
+	shortname: {type: String, required: false},
+	orgnum: {type: String, required: false},
+	index: [indexSchema],
+	stocks: [stockSchema]
+});
+
+var Company = mongoose.model('Company', companySchema);
+
+
+
+
+
+var Globalcompact   = require('./app/models/globalcompact');
+var Allabolag   	= require('./app/models/allabolag');
+var Avanza   	  	= require('./app/models/avanza');
+var Solidinfo  	  	= require('./app/models/solidinfo');
 
 // Get all companies
 app.get('/company', function(req, res){
@@ -53,13 +80,16 @@ app.get('/company/:id', function(req, res){
 
 // Create one company
 app.post('/company', function(req, res){
+	console.log(req.body)
 	var post = req.body;
 
+
 	if(!post.name){
+		console.error(req.body)
 		return res.status(400).send('Bad request');
 	}
 
-	var acme = new Company({name: post.name});
+	var acme = new Company(req.body);
 
 	acme.save(function(err, acme){
 		if(err){
@@ -92,8 +122,10 @@ app.get('/board/:id', function(req, res){
 	var ab = new Allabolag.Allabolag();
 
 	ab.findBoardByNumber(req.params.id, function(err, data){
-		if(!err)
+		if(!err){
+			console.log(data);
 			res.json(data);
+		}
 		else
 			res.status(400).send('Bad request');
 	});
@@ -111,6 +143,41 @@ app.get('/equality/:id', function(req, res){
 		else
 			res.status(400).send('Bad request');
 	});
+});
+
+
+// Perform a web crawl and output as json
+app.get('/av/largecap', function(req, res){
+	var av = new Avanza.Avanza();
+
+	av.largecap(req.params.id, function(err, data){
+		if(!err){
+			res.json(data);
+		}
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+// Perform a web crawl and output as json
+app.get('/solidinfo/largecap', function(req, res){
+	var si = new Solidinfo.Solidinfo();
+
+	si.largecap(function(err, data){
+		if(!err){
+			res.json(data);
+		}
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+// Update all companies
+app.get('/crawl/update-all-companies', function(req, res){
+
 });
 
 

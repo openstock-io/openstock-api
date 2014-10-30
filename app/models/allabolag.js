@@ -58,7 +58,7 @@ Allabolag.prototype.equalityByNumber = function(num, callback){
 Allabolag.prototype.findBoardByNumber = function(num, callback){
 	url = this.baseUrl + '/' + num + '/befattningar'
 	
-	request(url, function(err, response, html){
+	request({'url':url}, function(err, response, html){
 
 		if(err){
 			console.error(err);
