@@ -1,12 +1,14 @@
 var express = require('express');
 var request = require('request');
+var async = require('async');
 var cheerio = require('cheerio');
 var mongoose = require('mongoose');
-var bodyParser = require('body-parser')
+var bodyParser = require('body-parser') // To get the body from a POST
 var app     = express();
 
 app.use(bodyParser.json())
 
+// Locally - get configuration from file
 try {
   var config = require('./config');
 } catch (e) {}
@@ -16,12 +18,19 @@ var mongoURL = process.env.MONGOHQ_URL || config.MONGOHQ_URL;
 
 mongoose.connect(mongoURL);
 
-var port = process.env.PORT || 8001; 		// set our port
+var port = process.env.PORT || 8001;
 
-var router = express.Router(); 				// get an instance of the express Router
+// Get an instance of the express Router
+var router = express.Router();// 
 
 
 
+
+/********************************
+*								*
+*	Mongoose Database Models 	*
+*								*
+*********************************/
 
 var Schema       = mongoose.Schema;
 
@@ -35,12 +44,18 @@ var stockSchema = new Schema({
 	lastprice: {type: Number}
 });
 
+var linksSchema = new Schema({
+	name: {type: String, required: true},
+	url: {type: String, required: false}
+});
+
 var companySchema = new Schema({
 	name: {type: String, required: true},
 	shortname: {type: String, required: false},
 	orgnum: {type: String, required: false},
-	index: [indexSchema],
-	stocks: [stockSchema]
+	// index: [indexSchema],
+	// stocks: [stockSchema],
+	// links: [linksSchema]
 });
 
 var Company = mongoose.model('Company', companySchema);
@@ -48,11 +63,25 @@ var Company = mongoose.model('Company', companySchema);
 
 
 
+/************
+*			*
+*	Models 	*
+*			*
+*************/
 
 var Globalcompact   = require('./app/models/globalcompact');
 var Allabolag   	= require('./app/models/allabolag');
 var Avanza   	  	= require('./app/models/avanza');
 var Solidinfo  	  	= require('./app/models/solidinfo');
+
+
+
+/****************************
+*							*
+*	API - Express Routes	*
+*							*
+*****************************/
+
 
 // Get all companies
 app.get('/company', function(req, res){
@@ -66,7 +95,7 @@ app.get('/company', function(req, res){
 });
 
 
-// Get One company
+// Get one company
 app.get('/company/:id', function(req, res){
 	Company.findOne({}, function(err, company){
 		if(err){
@@ -166,7 +195,16 @@ app.get('/solidinfo/largecap', function(req, res){
 
 	si.largecap(function(err, data){
 		if(!err){
-			res.json(data);
+
+			async.forEach(data, function(el, next){
+				console.log(el);
+				Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(){
+					next();
+				});
+			}, function(){
+				res.json(data);
+			});
+
 		}
 		else
 			res.status(400).send('Bad request');
@@ -182,13 +220,16 @@ app.get('/crawl/update-all-companies', function(req, res){
 
 
 // Update a company
-app.put('/company', function(req, res){
+app.put('/company/:id', function(req, res){
 
 });
 
 
+
+
+
+
+// Start application
 app.listen(port);
-
 console.log(port);
-
 exports = module.exports = app;
