@@ -1,7 +1,7 @@
 {
-  "name"         : "openstock-crawler",
+  "name"         : "openstock-api",
   "version"      : "0.0.1",
-  "description"  : "Openstock web crawler",
+  "description"  : "Openstock API",
   "main"         : "app.js",
   "author"       : "David",
   "dependencies" : {
@@ -9,6 +9,7 @@
     "request"    : "latest",
     "cheerio"    : "latest",
     "mongoose"   : "latest",
-    "body-parser": "latest"
+    "body-parser": "latest",
+    "async"      : "latest"
   }
 }
