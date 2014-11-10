@@ -2,7 +2,7 @@ var request = require('request');
 var cheerio = require('cheerio');
 
 function Allabolag(){
-	this.baseUrl = 'http://www.Allabolag.se';
+	this.baseUrl = 'http://www.allabolag.se';
 }
 
 Allabolag.prototype.equalityByNumber = function(num, callback){
@@ -10,7 +10,7 @@ Allabolag.prototype.equalityByNumber = function(num, callback){
 
 		if(err){
 			console.error(err);
-			return err;
+			return callback(err = true, err);
 		}
 
 		var total = data.length;
@@ -50,20 +50,20 @@ Allabolag.prototype.equalityByNumber = function(num, callback){
 			'percentage of unknown': (100 * (u/total)).toFixed(0)
 		};
 
-		return callback(err = false, node);
+		callback(err = false, node);
 	});
 }
 
 
 Allabolag.prototype.findBoardByNumber = function(num, callback){
+	num = num.replace('-', '');
+
 	url = this.baseUrl + '/' + num + '/befattningar'
 	
 	request({'url':url}, function(err, response, html){
 
-		if(err){
-			console.error(err);
-			return err;
-		}
+		if(err)
+			return callback(error = true, err);
 
 		else{
 			var $ = cheerio.load(html);
@@ -96,7 +96,7 @@ Allabolag.prototype.findBoardByNumber = function(num, callback){
 				return null;
 			});
 
-			return callback(error = false, test.get());
+			callback(error = false, test.get());
 		}
 
 	});
