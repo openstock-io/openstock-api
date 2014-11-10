@@ -58,6 +58,46 @@ Globalcompact.prototype.crawl = function(callback){
 	});
 }
 
+
+Globalcompact.prototype.parseFt500 = function(html, callback){
+	var $ = cheerio.load(html);
+
+	var test = $('#rightcontent').find('table').find('tbody tr').map(function(){
+		var node = {};
+		node.name = $(this).find('td div a').text();
+
+		return node;
+	});
+
+	callback(error = false, test.get());
+}
+
+
+
+Globalcompact.prototype.ft500 = function(callback){
+	var _this = this;
+
+	baseUrl = 'https://www.unglobalcompact.org';
+	url = baseUrl + '/participants/search?business_type=2&commit=Search&cop_status=active&is_ft_500=1&joined_after=&joined_before=&keyword=&listing_status_id=3&organization_type_id=&page=1&per_page=250&sector_id=&utf8=true';
+
+	request(url, function(error, response, html){
+		if(error)
+			console.error(error);
+
+		else
+			_this.parseFt500(html, callback);
+	});
+}
+
+
+
+
+
+
+
 module.exports.Globalcompact = Globalcompact;
+module.exports.Globalcompact.ft500 = Globalcompact.prototype.ft500;
 module.exports.Globalcompact.crawl = Globalcompact.prototype.crawl;
 module.exports.Globalcompact.getOne = Globalcompact.prototype.getOne;
+
+

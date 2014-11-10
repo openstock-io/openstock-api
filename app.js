@@ -73,6 +73,7 @@ var Globalcompact   = require('./app/models/globalcompact');
 var Allabolag   	= require('./app/models/allabolag');
 var Avanza   	  	= require('./app/models/avanza');
 var Solidinfo  	  	= require('./app/models/solidinfo');
+var Ft  	  		= require('./app/models/ft');
 
 
 
@@ -144,7 +145,7 @@ app.put('/company/:id', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/crawl/globalcompact/participants', function(req, res){
+app.get('/globalcompact/sweden', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
 
 	gc.mock(function(err, data){
@@ -158,8 +159,24 @@ app.get('/crawl/globalcompact/participants', function(req, res){
 
 
 
+// Perform a web crawl and output as json
+app.get('/globalcompact/ft500', function(req, res){
+	var gc = new Globalcompact.Globalcompact();
+
+	gc.ft500(function(err, data){
+		if(!err)
+			res.json(data);
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+
+
 // Find one company (crawl) and output as json
-app.get('/crawl/globalcompact/participants/search/:id', function(req, res){
+app.get('/globalcompact/search/:id', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
 
 	gc.getOne(req.params.id, function(err, data){
@@ -242,7 +259,7 @@ app.get('/equality/:id', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/crawl/avanza/largecap', function(req, res){
+app.get('/avanza/largecap', function(req, res){
 	var av = new Avanza.Avanza();
 
 	av.largecap(req.params.id, function(err, data){
@@ -256,26 +273,77 @@ app.get('/crawl/avanza/largecap', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/crawl/solidinfo/largecap', function(req, res){
+app.get('/solidinfo/largecap', function(req, res){
 	var si = new Solidinfo.Solidinfo();
 
 	si.mock(function(err, data){
 		if(!err){
-
-			async.forEach(data, function(el, next){
-				console.log(el);
-				Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(){
-					next();
-				});
-			}, function(){
-				res.json(data);
-			});
-
+			res.json(data);
 		}
 		else
 			res.status(400).send('Bad request');
 	});
 });
+
+
+
+
+
+
+
+
+// Perform a web crawl and output as json
+app.get('/ft/ft500', function(req, res){
+	var ft = new Ft.Ft();
+
+	ft.ft500(list1, list2, function(err, data){
+		if(!err){
+			res.json(data);
+		}
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+// Perform a web crawl and output as json
+app.get('/ft500/merge', function(req, res){
+	var ft = new Ft.Ft();
+	var gc = new Globalcompact.Globalcompact();
+
+
+	ft.ft500(function(err, ftData){
+		if(err){
+			console.error(err);
+			return res.status(400).send('Bad request');
+		}
+
+		else{
+			gc.ft500(function(error, gcData){
+				if(err){
+					console.error(err);
+					return res.status(400).send('Bad request');
+				}
+
+				else{
+					ft.merge(ftData, gcData, function(result){
+						res.json(result);
+					});
+				}
+			});
+		}
+
+	});
+});
+
+
+
+
+
+
+
+
 
 
 
