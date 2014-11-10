@@ -131,18 +131,96 @@ app.post('/company', function(req, res){
 
 });
 
+// Update a company
+app.put('/company/:id', function(req, res){
+	var el = req.body;
+
+	Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(err, numberAffected, rawResponse){
+		res.json(rawResponse);
+	});
+});
+
+
+
 
 // Perform a web crawl and output as json
-app.get('/globalcompact', function(req, res){
+app.get('/crawl/globalcompact/participants', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
 
-	gc.crawl(function(err, data){
+	gc.mock(function(err, data){
 		if(!err)
 			res.json(data);
 		else
 			res.status(400).send('Bad request');
 	});
 });
+
+
+
+
+// Find one company (crawl) and output as json
+app.get('/crawl/globalcompact/participants/search/:id', function(req, res){
+	var gc = new Globalcompact.Globalcompact();
+
+	gc.getOne(req.params.id, function(err, data){
+		if(!err)
+			res.json(data);
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+app.get('/mergeGlobalCompact', function(req, res){
+	var gc = new Globalcompact.Globalcompact();
+
+	gc.mock(function(err, data){
+		if(!err){
+
+			async.forEach(data, function(el, next){
+
+				nameAfter = el.name
+					.replace(/^AB /i, '')
+					.replace(/ AB$/i, '')
+					.replace(/ AB/i, '')
+					.replace(/\.{1,3}/i, '')
+					.replace(/\(publ\)/i, '');
+
+				console.log(el.name + ' | ' + nameAfter);
+
+				/*
+				Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(){
+					next();
+				});
+				*/
+
+				Company.findOne({name: /+nameAfter+/i}, function(err, company){
+					if(err){
+						return console.error(err);
+					}
+
+					console.log(company);
+				});
+
+
+
+
+				next();
+			}, function(){
+				res.json(data);
+			});
+
+		}
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+
+
 
 
 
@@ -176,7 +254,7 @@ app.get('/equality/:id', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/av/largecap', function(req, res){
+app.get('/crawl/avanza/largecap', function(req, res){
 	var av = new Avanza.Avanza();
 
 	av.largecap(req.params.id, function(err, data){
@@ -190,10 +268,10 @@ app.get('/av/largecap', function(req, res){
 
 
 // Perform a web crawl and output as json
-app.get('/solidinfo/largecap', function(req, res){
+app.get('/crawl/solidinfo/largecap', function(req, res){
 	var si = new Solidinfo.Solidinfo();
 
-	si.largecap(function(err, data){
+	si.mock(function(err, data){
 		if(!err){
 
 			async.forEach(data, function(el, next){
@@ -213,23 +291,9 @@ app.get('/solidinfo/largecap', function(req, res){
 
 
 
-// Update all companies
-app.get('/crawl/update-all-companies', function(req, res){
-
-});
-
-
-// Update a company
-app.put('/company/:id', function(req, res){
-
-});
-
-
-
-
-
 
 // Start application
 app.listen(port);
-console.log(port);
+console.log('Openstock on port ' + port);
 exports = module.exports = app;
+
