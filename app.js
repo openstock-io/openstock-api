@@ -188,24 +188,12 @@ app.get('/mergeGlobalCompact', function(req, res){
 					.replace(/\(publ\)/i, '');
 
 				console.log(el.name + ' | ' + nameAfter);
-
+				
 				/*
 				Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(){
 					next();
 				});
 				*/
-
-				Company.findOne({name: /+nameAfter+/i}, function(err, company){
-					if(err){
-						return console.error(err);
-					}
-
-					console.log(company);
-				});
-
-
-
-
 				next();
 			}, function(){
 				res.json(data);
