@@ -3,7 +3,7 @@ var cheerio = require('cheerio');
 var async = require('async');
 var fs  = require('fs');
 
-request.debug = true;
+// request.debug = true;
 
 function Ft(){
 }
