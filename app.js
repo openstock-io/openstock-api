@@ -51,8 +51,11 @@ var linksSchema = new Schema({
 
 var companySchema = new Schema({
 	name: {type: String, required: true},
-	shortname: {type: String, required: false},
-	orgnum: {type: String, required: false},
+	fullname: {type: String, required: true},
+	ticker: {type: String, required: false},
+	country: {type: String, required: false},
+	countrycode: {type: String, required: false},
+	globalcompact: {type: Boolean, required: false}
 	// index: [indexSchema],
 	// stocks: [stockSchema],
 	// links: [linksSchema]
