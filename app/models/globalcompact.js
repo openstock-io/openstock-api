@@ -1,5 +1,6 @@
 var request = require('request');
 var cheerio = require('cheerio');
+var async = require('async');
 
 function Globalcompact(){
 }
@@ -59,17 +60,32 @@ Globalcompact.prototype.crawl = function(callback){
 }
 
 
-Globalcompact.prototype.parseFt500 = function(html, callback){
+Globalcompact.prototype.parseFt500 = function(html){
 	var $ = cheerio.load(html);
 
-	var test = $('#rightcontent').find('table').find('tbody tr').map(function(){
+	return $('#rightcontent').find('table').find('tbody tr').map(function(){
 		var node = {};
 		node.name = $(this).find('td div a').text();
 
-		return node;
-	});
+		node.name = node.name
+			.replace(/^AB /, '')
+			.replace(/ AB$/, '')
+			.replace(/ AB/, '')
+			.replace(/^AG /, '')
+			.replace(/ AG$/, '')
+			.replace(/ AG/, '')
+			.replace(/^The /, '')
+			.replace(/,? ltd\.?$/i, '')
+			.replace(/,? limited\.?$/i, '')
+			.replace(/,? public\.?$/i, '')
+			.replace(/,? company\.?$/i, '')
+			.replace(/\.{1,3}/, '')
+			.replace(/,? inc$/i, '')
+			.replace(/\(publ\)/i, '')
+			.trim();
 
-	callback(error = false, test.get());
+		return node;
+	}).get();
 }
 
 
@@ -78,26 +94,46 @@ Globalcompact.prototype.ft500 = function(callback){
 	var _this = this;
 
 	baseUrl = 'https://www.unglobalcompact.org';
-	url = baseUrl + '/participants/search?business_type=2&commit=Search&cop_status=active&is_ft_500=1&joined_after=&joined_before=&keyword=&listing_status_id=3&organization_type_id=&page=1&per_page=250&sector_id=&utf8=true';
 
-	request(url, function(error, response, html){
-		if(error)
-			console.error(error);
+	var json = [];
 
-		else
-			_this.parseFt500(html, callback);
+	async.series([
+		function(next){
+			url = baseUrl + '/participants/search?business_type=2&commit=Search&cop_status=active&is_ft_500=1&joined_after=&joined_before=&keyword=&listing_status_id=3&organization_type_id=&page=1&per_page=250&sector_id=&utf8=true';
+			request(url, function(error, response, html){
+				if(error)
+					console.error(error);
+
+				else{
+					json = json.concat(_this.parseFt500(html));
+					next();
+				}
+			});
+		},
+
+		function(next){
+			url = baseUrl + '/participants/search?business_type=2&commit=Search&cop_status=active&is_ft_500=1&joined_after=&joined_before=&keyword=&listing_status_id=3&organization_type_id=&page=2&per_page=250&sector_id=&utf8=true';
+			request(url, function(error, response, html){
+				if(error)
+					console.error(error);
+
+				else{
+					json = json.concat(_this.parseFt500(html));
+					next();
+				}
+			});
+		}
+	], 
+
+	function whenDone(){
+		callback(error = false, json);
 	});
 }
 
 
 
-
-
-
-
+// Exports
 module.exports.Globalcompact = Globalcompact;
 module.exports.Globalcompact.ft500 = Globalcompact.prototype.ft500;
 module.exports.Globalcompact.crawl = Globalcompact.prototype.crawl;
 module.exports.Globalcompact.getOne = Globalcompact.prototype.getOne;
-
-
