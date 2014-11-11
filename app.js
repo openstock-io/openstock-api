@@ -143,22 +143,6 @@ app.put('/company/:id', function(req, res){
 
 
 
-
-// Perform a web crawl and output as json
-app.get('/globalcompact/sweden', function(req, res){
-	var gc = new Globalcompact.Globalcompact();
-
-	gc.mock(function(err, data){
-		if(!err)
-			res.json(data);
-		else
-			res.status(400).send('Bad request');
-	});
-});
-
-
-
-
 // Perform a web crawl and output as json
 app.get('/globalcompact/ft500', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
@@ -186,44 +170,6 @@ app.get('/globalcompact/search/:id', function(req, res){
 			res.status(400).send('Bad request');
 	});
 });
-
-
-
-app.get('/mergeGlobalCompact', function(req, res){
-	var gc = new Globalcompact.Globalcompact();
-
-	gc.mock(function(err, data){
-		if(!err){
-
-			async.forEach(data, function(el, next){
-
-				nameAfter = el.name
-					.replace(/^AB /i, '')
-					.replace(/ AB$/i, '')
-					.replace(/ AB/i, '')
-					.replace(/\.{1,3}/i, '')
-					.replace(/\(publ\)/i, '');
-
-				console.log(el.name + ' | ' + nameAfter);
-				
-				/*
-				Company.update({'orgnum':el.orgnum}, { $set: el}, {upsert:true}, function(){
-					next();
-				});
-				*/
-				next();
-			}, function(){
-				res.json(data);
-			});
-
-		}
-		else
-			res.status(400).send('Bad request');
-	});
-});
-
-
-
 
 
 
