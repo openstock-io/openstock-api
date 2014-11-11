@@ -6,7 +6,6 @@ function Avanza(){
 }
 
 
-
 Avanza.prototype.largecap = function(num, callback){
 	url = this.baseUrl + '/aktier/lista.html?countryCode=SE&marketPlaceOrList=LIST_LargeCap.SE&sectorId=ALL&sortField=NAME&sortOrder=ASCENDING&activeTab=quote';
 	
@@ -35,5 +34,9 @@ Avanza.prototype.largecap = function(num, callback){
 	});
 }
 
+
+
+// Exports
 module.exports.Avanza = Avanza;
 module.exports.Avanza.largecap = Avanza.prototype.largecap;
+

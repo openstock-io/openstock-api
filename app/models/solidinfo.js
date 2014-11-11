@@ -90,5 +90,9 @@ Solidinfo.prototype.largecap = function(callback){
 	});
 }
 
+
+
+// Exports
 module.exports.Solidinfo = Solidinfo;
 module.exports.Solidinfo.largecap = Solidinfo.prototype.largecap;
+

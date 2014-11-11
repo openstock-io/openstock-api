@@ -102,6 +102,11 @@ Allabolag.prototype.findBoardByNumber = function(num, callback){
 	});
 }
 
+
+
+
+// Exports
 module.exports.Allabolag = Allabolag;
 module.exports.Allabolag.findBoardByNumber = Allabolag.prototype.findBoardByNumber;
 module.exports.Allabolag.equalityByNumber = Allabolag.prototype.equalityByNumber;
+
