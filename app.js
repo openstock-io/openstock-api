@@ -256,33 +256,73 @@ app.get('/ft/ft500', function(req, res){
 
 
 
-// Perform a web crawl and output as json
-app.get('/ft500/merge', function(req, res){
+
+
+// Perform a web crawl and save to db
+app.get('/ft500/update', function(req, res){
 	var ft = new Ft.Ft();
+
+	ft.ft500(function(err, data){
+		if(!err){
+			async.forEach(data, function(el, next){
+				Company.update({'name':el.name}, { $set: el}, {upsert:true}, function(){
+					next();
+				});
+			}, function whenDone(){
+				res.json(data);
+			});
+		}
+		else
+			res.status(400).send('Bad request');
+	});
+});
+
+
+
+
+
+// Perform a web crawl and output as json
+app.get('/gc/update', function(req, res){
 	var gc = new Globalcompact.Globalcompact();
 
+	var result = {
+		match: {
+			list: [],
+			length : 0
+		},
 
-	ft.ft500(function(err, ftData){
+		miss: {
+			list: [],
+			length : 0
+		}
+	}
+
+	gc.ft500(function(err, data){
 		if(err){
 			console.error(err);
 			return res.status(400).send('Bad request');
 		}
 
 		else{
-			gc.ft500(function(error, gcData){
-				if(err){
-					console.error(err);
-					return res.status(400).send('Bad request');
-				}
+			async.forEach(data, function(el, next){
+				Company.update({name:el.name}, { globalcompact: true}, {upsert:false}, function(err, numberAffected, raw){
 
-				else{
-					ft.merge(ftData, gcData, function(result){
-						res.json(result);
-					});
-				}
+					if (0 == numberAffected){
+						result.miss.list.push(el.name);
+					}
+
+					else if (1 == numberAffected){
+						result.match.list.push(el.name);
+					}
+
+					next();
+				});
+			}, function whenDone(){
+				result.match.length = result.match.list.length;
+				result.miss.length = result.miss.list.length;
+				res.json(result);
 			});
 		}
-
 	});
 });
 
