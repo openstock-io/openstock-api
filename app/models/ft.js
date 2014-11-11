@@ -29,7 +29,19 @@ Ft.prototype.parse = function(html, callback){
 		var ret = {};
 
 		ret.name = $(element).find('div.company-name').find('a').text();
-		ret.ticker = $(element).find('div.company-name').find('a').attr('data-hover-chart');
+
+		fullname = $(element).find('div.company-name').attr('title').match(/^([^\(.]*)\(.*\)/i);
+
+		if (fullname && 1 in fullname)
+			ret.fullname = fullname[1].trim();
+
+		var ticker = $(element).find('div.company-name').find('a').attr('data-hover-chart');
+
+		if (ticker){
+			ret.ticker = ticker.split(":")[1];
+			ret.countrycode = ticker.split(":")[0];
+		}
+
 		ret.country = $(element).find('div.company-country').find('a').text();
 
 		return ret;
