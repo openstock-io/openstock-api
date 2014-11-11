@@ -53,6 +53,9 @@ Ft.prototype.ft500 = function(callback){
 	});
 }
 
+
+
+
+// Exports
 module.exports.Ft = Ft;
 module.exports.Ft.ft500 = Ft.prototype.ft500;
-
